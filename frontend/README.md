@@ -159,13 +159,13 @@ sequenceDiagram
     participant API as Backend API
     participant Solana as Solana
 
-    UI->>API: GET /api/paid
+    UI->>API: GET /api/course/anchor-security
     API->>UI: 402 Payment Required
 
     UI->>Wallet: Request signature
     Wallet->>UI: Signed transaction
 
-    UI->>API: GET /api/paid<br/>X-PAYMENT: {tx}
+    UI->>API: GET /api/course/anchor-security<br/>X-PAYMENT: {tx}
     API->>Solana: Verify & submit
     Solana->>API: Confirmed
     API->>UI: 200 OK + content

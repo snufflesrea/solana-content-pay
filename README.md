@@ -1,19 +1,14 @@
-# x402 Solana Payment Server
+# solana-content-pay
 
-A production-ready Rust template for building HTTP APIs with x402 payment integration on Solana. Accept USDC payments for API access using the x402 protocol.
+A production-ready Rust server built with **Axum** for HTTP APIs with x402 payment integration on Solana.
 
-## Overview
+## Features
 
-This template provides a complete server implementation supporting the [x402 payment protocol](https://x402.org) for Solana. It enables you to create paid API endpoints where users pay with USDC to access protected content.
-
-**Key Features:**
-
-- **Pure Rust** - Type-safe, high-performance, memory-safe
-- **x402 Protocol** - Standard HTTP 402 payment protocol for Solana
-- **Multi-Framework** - Choose Axum, Actix, or Rocket
+- **Axum Framework** - Modern, ergonomic web framework
+- **x402 Protocol** - HTTP 402 payment protocol for Solana
+- **USDC Payments** - Accept USDC for API access
 - **Production Ready** - CORS, logging, error handling included
-- **Zero Config** - Works out of the box with sensible defaults
-- **Testing UI** - Web-based frontend for testing payments
+- **Testing UI** - Web frontend for testing payments
 
 ## Payment Flow
 
@@ -24,47 +19,17 @@ sequenceDiagram
     participant Facilitator
     participant Solana
 
-    Client->>Server: GET /api/paid
-    Server->>Client: 402 Payment Required<br/>{paymentRequirements}
-
-    Note over Client: User signs transaction<br/>with wallet
-
-    Client->>Server: GET /api/paid<br/>X-PAYMENT: {transaction}
-    Server->>Facilitator: verify_payment()
-    Note over Facilitator: Validates transaction
-    Facilitator->>Server: Valid
-    Server->>Facilitator: settle_payment()
+    Client->>Server: GET /api/course/anchor-security
+    Server->>Client: 402 Payment Required
+    Client->>Server: GET /api/course/anchor-security (with payment)
+    Server->>Facilitator: Verify & settle
     Facilitator->>Solana: Submit transaction
-    Solana->>Facilitator: Confirmation
-    Facilitator->>Server: Settled
-    Server->>Client: 200 OK<br/>{protected content}
+    Server->>Client: 200 OK (protected content)
 ```
 
 ## Quick Start
 
-### Installation
-
-Create a new project with one command:
-
-```bash
-# Create from template
-npx create-solana-dapp my-project --template solana-content-pay
-```
-
-```bash
-# Navigate to project
-cd my-project
-```
-
-```bash
-# Initialize the project with a framework(Axum, Actix or Rocket)
-node create
-# Choose 1, 2 or 3 when prompted
-```
-
 ### Configuration
-
-Copy environment template and add your Solana wallet:
 
 ```bash
 cp .env.example .env
@@ -73,15 +38,15 @@ cp .env.example .env
 
 ### Run
 
-Start the server:
-
 ```bash
 cargo run
 ```
 
+Server starts on `http://localhost:3000`
+
 ### Test
 
-**Web UI (Recommended):**
+**Web UI:**
 
 ```bash
 cd frontend
@@ -91,82 +56,73 @@ cp .env.example .env
 npm run dev
 ```
 
+Visit `http://localhost:5173`
+
+**Manual:**
+
+```bash
+curl http://localhost:3000/api/health
+curl http://localhost:3000/api/free
+curl http://localhost:3000/api/course/anchor-security
+```
+
 ## API Endpoints
 
-| Endpoint      | Method | Description                  | Payment Required |
-| ------------- | ------ | ---------------------------- | ---------------- |
-| `/api/health` | GET    | Health check and server info | No               |
-| `/api/free`   | GET    | Free access endpoint         | No               |
-| `/api/paid`   | GET    | Protected content            | Yes (USDC)       |
+| Endpoint      | Method | Payment Required | Description                  |
+| ------------- | ------ | ---------------- | ---------------------------- |
+| `/api/health` | GET    | No               | Health check and server info |
+| `/api/free`   | GET    | No               | Free access endpoint         |
+| `/api/course/anchor-security`   | GET    | Yes (USDC)       | Protected content (demo)     |
 
-## Configuration Reference
+## Configuration
 
 ### Required
 
-- `RECEIVER_WALLET_ADDRESS` - Your Solana wallet to receive payments
+- `RECEIVER_WALLET_ADDRESS` - Your Solana wallet
 
 ### Optional
 
 - `SOLANA_NETWORK` - `solana-devnet` or `solana-mainnet` (default: devnet)
-- `SOLANA_RPC_URL` - RPC endpoint (default: devnet public RPC)
-- `USDC_MINT_ADDRESS` - USDC token address (default: devnet USDC)
+- `SOLANA_RPC_URL` - RPC endpoint
+- `USDC_MINT_ADDRESS` - USDC token address
 - `DEFAULT_PRICE` - Price in micro-USDC (default: 10000 = $0.01)
-- `HOST` - Server bind address (default: localhost)
-- `PORT` - Server port (default: 3000)
+- `HOST` - Bind address (default: localhost)
+- `PORT` - Port (default: 3000)
 
 ## Project Structure
 
 ```
-.
-├── facilitator/          # Payment facilitator implementations
-│   ├── local.rs          # Direct blockchain submission locally
-│   ├── traits.rs         # Facilitator trait
-│   └── utils.rs          # Common txn utilities
-├── frameworks/           # Framework templates
-│   ├── axum/             # Axum implementation
-│   ├── actix/            # Actix implementation
-│   └── rocket/           # Rocket implementation
-├── shared/               # Shared code
-│   ├── config.rs         # Configuration(env)
-│   ├── types.rs          # x402 types
-│   ├── verification.rs   # Payment verification functions
-│   └── error.rs          # Error enum
-├── frontend/             # Testing UI
-└── create.js             # Project generator
+solana-content-pay/
+├── src/
+│   ├── main.rs              # Server entry point & routing
+│   ├── facilitator/         # Payment processing
+│   │   ├── mod.rs           # Module exports
+│   │   ├── local.rs         # Local facilitator implementation
+│   │   ├── traits.rs        # Facilitator trait definitions
+│   │   └── utils.rs         # Transaction utilities
+│   ├── routes/              # API route handlers
+│   │   ├── mod.rs           # Route module exports
+│   │   ├── health.rs        # Health check endpoint
+│   │   ├── free.rs          # Free endpoint
+│   │   └── paid.rs          # Protected endpoint
+│   └── shared/              # Shared utilities
+│       ├── mod.rs           # Shared module exports
+│       ├── config.rs        # Configuration management
+│       ├── types.rs         # x402 types
+│       ├── verification.rs  # Payment verification
+│       └── error.rs         # Error types
+├── frontend/                # Testing UI
+├── Cargo.toml               # Rust dependencies
+└── README.md                # This file
 ```
-
-## Development
-
-### Adding Protected Endpoints
-
-1. Create a new route handler
-2. Use the `verify_payment()` function
-3. Return `PaymentResult` enum
-4. Mount the route
-
-See framework-specific documentation in `frameworks/<framework>/`
-
-## Security Considerations
-
-### CORS Configuration
-
-**IMPORTANT**: This template uses permissive CORS settings for development convenience. **Before deploying to production or mainnet**, you MUST update the CORS configuration to restrict origins.
-
-The current configuration allows requests from ANY origin, which poses a security risk in production environments.
-
-See the inline code comments in `src/main.rs` for production configuration examples (Axum, Actix, Rocket).
 
 ## Resources
 
-- [x402 Protocol Specification](https://x402.org)
+- [Axum Documentation](https://docs.rs/axum/)
+- [x402 Protocol](https://x402.org)
 - [Frontend Documentation](frontend/README.md)
 - [Solana Documentation](https://docs.solana.com)
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details
-
-## Contributors
-
-- **[0xsouravm](https://github.com/0xsouravm)** - Sourav Mishra
-- **[crypto-priest](https://github.com/crypto-priest)** - Mahavir Ganapati Dash
+MIT License - see [LICENSE](LICENSE)

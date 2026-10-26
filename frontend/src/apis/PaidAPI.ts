@@ -50,7 +50,7 @@ export class PaidAPI extends BaseAPI {
   constructor() {
     super({
       name: 'Paid Endpoint',
-      path: '/api/paid',
+      path: '/api/course/anchor-security',
       method: 'GET',
       description: 'Protected endpoint - requires x402 payment',
       requiresPayment: true,
