@@ -1,0 +1,28 @@
+{
+  "name": "solana-content-pay",
+  "scripts": {
+    "postinstall": "node create.js"
+  },
+  "displayName": "x402 Solana Rust",
+  "version": "1.0.0",
+  "description": "x402 payment server template for Solana with Rust",
+  "usecase": "Payments",
+  "bin": {
+    "create-x402": "./create.js"
+  },
+  "keywords": [
+    "solana",
+    "x402",
+    "rust",
+    "payments",
+    "api",
+    "axum",
+    "actix",
+    "rocket"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crypto-priest/solana-content-pay"
+  },
+  "license": "MIT"
+}
