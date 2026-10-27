@@ -51,7 +51,12 @@ async fn main() -> anyhow::Result<()> {
     // Start server
     let listener = tokio::net::TcpListener::bind(&addr).await?;
     log::info!("Server listening on http://{}", addr);
-    log::info!("Try: curl http://{}/api/health", addr);
+    log::info!("=================================");
+    log::info!("| Welcome to Solana Content Pay |");
+    log::info!("=================================\n");
+    log::info!("To check health status: curl http://{}/api/health", addr);
+    log::info!("To get the products list: curl http://{}/api/products", addr);
+    log::info!("To buy the products: curl http://{}/api/product/:products_id", addr);
 
     axum::serve(listener, app).await?;
 

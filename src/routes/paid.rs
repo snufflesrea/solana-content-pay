@@ -3,6 +3,7 @@ use axum::{
     extract::State,
     http::{StatusCode, HeaderMap},
     response::{IntoResponse, Response},
+    extract::Path,
 };
 use serde_json::json;
 use std::sync::Arc;
@@ -14,8 +15,9 @@ use crate::shared::{
 pub async fn paid_endpoint(
     State(config): State<Arc<Config>>,
     headers: HeaderMap,
+    Path(product_id): Path<u16>,
 ) -> Response {
-    log::info!("Received request to /api/course/anchor-security");
+    log::info!("Received request to /api/product/{}", product_id);
 
     let payment_header = headers.get("x-payment").and_then(|h| h.to_str().ok());
 
@@ -28,8 +30,8 @@ pub async fn paid_endpoint(
     let result = verify_payment(
         &config,
         payment_header,
-        "/api/course/anchor-security",
-        Some("Access to paid course API endpoint".to_string()),
+        "/api/product/{product_id}",
+        Some("Buying product".to_string()),
     ).await;
 
     match result {

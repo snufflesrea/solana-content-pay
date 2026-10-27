@@ -107,7 +107,7 @@ Install the following tools:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/solana-content-pay.git
+git clone https://github.com/snufflesrea/solana-content-pay.git
 cd solana-content-pay
 ```
 
@@ -218,6 +218,11 @@ After successful verification and settlement, the server returns the protected c
 
 The actual payment headers and payload format must follow the x402 version implemented by the selected template.
 
+### CLI Command
+Check health : curl http://localhost:3000/api/health
+Products list : curl http://localhost:3000/api/products
+To buy the products: curl http://localhost:3000/api/product/:product_id
+
 ## Security Considerations
 
 Payment-gated content introduces several trust boundaries. This project aims to test and document them explicitly.
@@ -275,8 +280,8 @@ For this project, it offers several benefits:
 ## Roadmap
 
 ### Phase 1 — Functional MVP
-- [ ] Set up the official Rust/Axum template
-- [ ] Create a small product catalogue
+- [x] Set up the official Rust/Axum template
+- [x] Create a small product catalogue
 - [ ] Add one protected content endpoint
 - [ ] Configure Devnet USDC payments
 - [ ] Verify payment and unlock content
